@@ -13,9 +13,15 @@ module Sensei
       UNIXSocket.open @master_location do |s|
         socket = Sockets::NonBlockingSocket.new s
         socket.puts @command
-
-        output = socket.read
-        puts output
+        until @closed do
+          output = socket.read
+          if output.empty?
+            socket.close
+            @closed = true
+          else
+            puts output
+          end
+        end
       end
     end
   end

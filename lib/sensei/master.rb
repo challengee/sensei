@@ -23,7 +23,8 @@ module Sensei
         load command.script
 
         # We are done here, shut down the socket.
-        # @socket.shutdown :RDWR
+        @socket.shutdown :RDWR
+        @socket.close
 
         # Exit this process.
         exit
