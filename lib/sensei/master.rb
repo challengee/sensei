@@ -15,9 +15,14 @@ module Sensei
 
       # Do the forky thing.
       if fork.nil?
+        $: << '/usr/bin'
+
         # This is the child process.
         # Redirect STDOUT to the socket.
         $stdout = @socket
+
+        # Set arguments.
+        ARGV.replace command.arguments
 
         # Load the script.
         load command.script

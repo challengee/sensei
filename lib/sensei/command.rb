@@ -10,6 +10,10 @@ module Sensei
       @parts.first
     end
 
+    def arguments
+      @parts[1..-1]
+    end
+
     def to_s
       @command
     end
