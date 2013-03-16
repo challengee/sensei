@@ -13,6 +13,7 @@ module Sensei
     def initialize name
       @name = name
       @location = "/tmp/#{name}.socket"
+      boot
     end
 
     def start
@@ -32,6 +33,13 @@ module Sensei
           Master.new(socket).handle
         end while true
       end
+    end
+
+    private
+
+    def boot
+      require 'bundler'
+      Bundler.require if defined?(Bundler)
     end
   end
 end
