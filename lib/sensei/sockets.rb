@@ -1,3 +1,5 @@
+require 'delegate'
+
 module Sensei
 
   # Internal: A Collection of useful socket tools.
@@ -17,7 +19,7 @@ module Sensei
       def nonblocking io, &block
         begin
           return yield(io)
-        rescue IO::WaitReadable, IO::EINTR
+        rescue IO::WaitReadable, Errno::EINTR
           IO.select [io]
           retry
         end
@@ -27,13 +29,14 @@ module Sensei
     # Internal: Provides a reader that reads from
     # any socket in a nonblocking way, but perceived in
     # a blocking way.
-    class NonBlockingSocket
+    class NonBlockingSocket < SimpleDelegator
       include NonBlocking
 
       # Wraps a socket as a non-blocking reader.
       #
       # socket - The socket to wrap.
       def initialize socket
+        super
         @socket = socket
       end
 
@@ -42,7 +45,7 @@ module Sensei
       # Returns a String.
       def read
         nonblocking @socket do |socket|
-          return socket.recv_nonblock(256)
+          return socket.recv_nonblock(1024)
         end
       end
     end

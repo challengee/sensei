@@ -1,6 +1,7 @@
 require 'socket'
 
 require 'sensei/sockets'
+require 'sensei/master'
 
 module Sensei
   class Server
@@ -28,7 +29,7 @@ module Sensei
           puts "got socket #{socket}"
 
           # Attach a Sensei master to this socket.
-          # Master.new(socket).handle
+          Master.new(socket).handle
         end while true
       end
     end

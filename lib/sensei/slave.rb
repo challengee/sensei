@@ -10,10 +10,11 @@ module Sensei
     end
 
     def execute
-      UNIXSocket.open @master_location do |socket|
-        nb_socket = Sockets::NonBlockingSocket.new socket
+      UNIXSocket.open @master_location do |s|
+        socket = Sockets::NonBlockingSocket.new s
+        socket.puts @command
 
-        output = nb_socket.read
+        output = socket.read
         puts output
       end
     end
