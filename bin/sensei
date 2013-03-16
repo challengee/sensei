@@ -4,10 +4,11 @@ $: << File.expand_path('../../lib', __FILE__)
 
 require 'sensei'
 
-puts 'Booting sensei'
-
 if ARGV.size == 0
+  puts 'Booting Sensei'
+  require 'sensei/server'
   Sensei::Server.new('sensei').start
 else
-  Sensei::Slave.new ARGV.join(' ')
+  require 'sensei/slave'
+  Sensei::Slave.new(ARGV.join(' ')).execute
 end

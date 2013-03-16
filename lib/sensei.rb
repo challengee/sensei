@@ -1,5 +1,4 @@
-require 'sensei/version'
-require 'sensei/server'
+require "sensei/version"
 
 module Sensei
 end
