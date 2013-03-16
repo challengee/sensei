@@ -1,6 +1,6 @@
 require 'socket'
 
-require 'sockets'
+require 'sensei/sockets'
 
 module Sensei
   class Server
@@ -16,7 +16,7 @@ module Sensei
 
     def start
       # Remove the socket file if there is one.
-      File.delete @location
+      File.delete @location if File.exists? @location
 
       # Open a new unix domain socket.
       UNIXServer.open @location do |server|
@@ -24,6 +24,8 @@ module Sensei
         nonblocking server do
           # Accept a new socket.
           socket = server.accept_nonblock
+
+          puts "got socket #{socket}"
 
           # Attach a Sensei master to this socket.
           # Master.new(socket).handle

@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+$: << File.expand_path('../../lib', __FILE__)
+
+require 'sensei'
+
+puts 'Booting sensei'
+
+if ARGV.size == 0
+  Sensei::Server.new('sensei').start
+else
+  Sensei::Slave.new ARGV.join(' ')
+end
