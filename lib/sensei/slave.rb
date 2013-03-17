@@ -3,6 +3,7 @@ require 'sensei/sockets'
 
 module Sensei
   class Slave
+    include Sockets::NonBlocking
 
     def initialize command
       @command = command
@@ -10,18 +11,21 @@ module Sensei
     end
 
     def execute
-      UNIXSocket.open @master_location do |s|
-        socket = Sockets::NonBlockingSocket.new s
-        socket.puts @command
-        until @closed do
-          output = socket.read
-          if output.empty?
-            socket.close
-            @closed = true
-          else
-            print output
-          end
+      begin
+        UNIXSocket.open @master_location do |master|
+          master.puts @command
+
+          nonblocking read: [STDIN, master] do |read, write, err|
+            if read.include? STDIN
+              master.write STDIN.read_nonblock(1024)
+            end
+            if read.include? master
+              print master.read_nonblock(256)
+            end
+          end while true
         end
+      rescue EOFError
+        exit
       end
     end
   end
