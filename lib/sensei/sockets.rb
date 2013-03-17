@@ -16,11 +16,10 @@ module Sensei
       # io - The IO object to do some nonblocking io on.
       #
       # Yields the io object.
-      def nonblocking io, &block
+      def nonblocking ios, &block
         begin
-          return yield(io)
+          yield(IO.select(ios[:read], ios[:write], ios[:err]))
         rescue IO::WaitReadable, Errno::EINTR
-          IO.select [io]
           retry
         end
       end
