@@ -7,20 +7,28 @@ module Sensei
   class Master
 
     def initialize socket
-      @socket = Sockets::NonBlockingSocket.new socket
+      @slave = socket
     end
 
     def handle
-      command = Command.new @socket.read
+      command = Command.new @slave.gets
+      puts "Executing command: #{command}"
 
-      # Do the forky thing.
-      if fork.nil?
+      # # Do the forky thing.
+      if child = fork
+        # Detach the process.
+        Process.detach child
+
+        # Send the PID to the slave for full control.
+        # Need control plane here.
+        # @slave.puts
+      else
         $: << '/usr/bin'
 
         # This is the child process.
         # Redirect STDOUT and STDERR to the socket.
-        [$stdout, $stderr, STDOUT, STDERR].each do |io|
-          io.reopen @socket
+        [STDOUT, STDERR, STDIN].each do |io|
+          io.reopen @slave
         end
 
         # Set arguments.
@@ -30,8 +38,8 @@ module Sensei
         load command.script
 
         # We are done here, shut down the socket.
-        @socket.shutdown :RDWR
-        @socket.close
+        @slave.shutdown :RDWR
+        @slave.close
 
         # Exit this process.
         exit
