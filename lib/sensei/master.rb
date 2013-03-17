@@ -18,8 +18,10 @@ module Sensei
         $: << '/usr/bin'
 
         # This is the child process.
-        # Redirect STDOUT to the socket.
-        $stdout = @socket
+        # Redirect STDOUT and STDERR to the socket.
+        [$stdout, $stderr, STDOUT, STDERR].each do |io|
+          io.reopen @socket
+        end
 
         # Set arguments.
         ARGV.replace command.arguments
