@@ -19,7 +19,7 @@ module Sensei
             socket.close
             @closed = true
           else
-            puts output
+            print output
           end
         end
       end
