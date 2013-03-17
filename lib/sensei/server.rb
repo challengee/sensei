@@ -23,7 +23,8 @@ module Sensei
       # Open a new unix domain socket.
       UNIXServer.open @location do |server|
         # Accept sockets (nonblocking).
-        nonblocking server do
+        nonblocking read: [server] do
+          puts 'attempt server'
           # Accept a new socket.
           socket = server.accept_nonblock
 
@@ -38,8 +39,8 @@ module Sensei
     private
 
     def boot
-      require 'bundler'
-      Bundler.require if defined?(Bundler)
+      require './config/environment'
+      puts "Booted"
     end
   end
 end
