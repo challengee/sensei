@@ -6,3 +6,5 @@ Use Signal.list and Signal.trap.
 Mini DSL for configuring what to preload.
 Defaults to gem bundle.
 Defaults to environment for rails.
+
+Monitor Files to restart sensei when necessary.
