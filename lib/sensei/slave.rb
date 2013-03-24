@@ -15,6 +15,11 @@ module Sensei
         UNIXSocket.open @master_location do |master|
           master.puts @command
 
+          # Receive STDOUT, STDERR and STDIN.
+          [STDOUT, STDERR, STDIN].each do |io|
+            master.send_io io
+          end
+
           nonblocking read: [STDIN, master] do |read, write, err|
             if read.include? STDIN
               master.write STDIN.read_nonblock(1024)

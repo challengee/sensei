@@ -25,10 +25,9 @@ module Sensei
       else
         $: << '/usr/bin'
 
-        # This is the child process.
-        # Redirect STDOUT and STDERR to the socket.
+        # Receive STDOUT, STDERR and STDIN.
         [STDOUT, STDERR, STDIN].each do |io|
-          io.reopen @slave
+          io.reopen @slave.recv_io
         end
 
         # Set arguments.

@@ -3,8 +3,13 @@
 Send PID of detached child to slave and forward all signals to that process.
 Use Signal.list and Signal.trap.
 
-Mini DSL for configuring what to preload.
+Mini DSL for configuring what to preload + hooks.
 Defaults to gem bundle.
 Defaults to environment for rails.
 
 Monitor Files to restart sensei when necessary.
+Use guard/listen.
+Which files? Check via LOADED_FEATURES for files in project directory.
+
+Transparently start server on first sensei slave command.
+Shut down after period of inactivity.
