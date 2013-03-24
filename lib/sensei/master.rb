@@ -17,13 +17,14 @@ module Sensei
       # # Do the forky thing.
       if child = fork
         # Detach the process.
+        # This allows killing the sensei server without killing any
+        # of the slaves.
         Process.detach child
-
-        # Send the PID to the slave for full control.
-        # Need control plane here.
-        # @slave.puts
       else
         $: << '/usr/bin'
+
+        # Send the PID to the slave for full control.
+        @slave.puts $$
 
         # Receive STDOUT, STDERR and STDIN.
         [STDOUT, STDERR, STDIN].each do |io|

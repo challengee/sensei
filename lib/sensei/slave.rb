@@ -14,6 +14,13 @@ module Sensei
       begin
         UNIXSocket.open @master_location do |master|
           master.puts @command
+          pid = master.gets.strip.to_i
+
+          Signal.list.keys.each do |signal|
+            Signal.trap signal do |trapped|
+              Process.kill trapped, pid
+            end
+          end
 
           # Receive STDOUT, STDERR and STDIN.
           [STDOUT, STDERR, STDIN].each do |io|
