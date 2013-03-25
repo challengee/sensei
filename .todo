@@ -1,8 +1,3 @@
-3 planes (and sockets) per project: stdout, stderr and control.
-
-Send PID of detached child to slave and forward all signals to that process.
-Use Signal.list and Signal.trap.
-
 Mini DSL for configuring what to preload + hooks.
 Defaults to gem bundle.
 Defaults to environment for rails.

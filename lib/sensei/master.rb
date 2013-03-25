@@ -13,18 +13,17 @@ module Sensei
     def handle
       command = Command.new @slave.gets
       puts "Executing command: #{command}"
-
       # # Do the forky thing.
       if child = fork
-        # Detach the process.
-        # This allows killing the sensei server without killing any
-        # of the slaves.
-        Process.detach child
-      else
-        $: << '/usr/bin'
+        Thread.new do
+          # Send the PID to the slave for full control.
+          @slave.puts child
 
-        # Send the PID to the slave for full control.
-        @slave.puts $$
+          Process.wait child
+          @slave.puts $?.exitstatus
+        end
+      else
+        $:.push *ENV['PATH'].split(':')
 
         # Receive STDOUT, STDERR and STDIN.
         [STDOUT, STDERR, STDIN].each do |io|
@@ -37,12 +36,8 @@ module Sensei
         # Load the script.
         load command.script
 
-        # We are done here, shut down the socket.
-        @slave.shutdown :RDWR
-        @slave.close
-
-        # Exit this process.
-        exit
+        # Exit this process if it has not exited before.
+        exit 0
       end
     end
   end
