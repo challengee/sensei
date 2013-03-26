@@ -11,8 +11,9 @@ module Sensei
     end
 
     def handle
-      command = Command.new @slave.gets
-      puts "Executing command: #{command}"
+      command = @slave.gets
+      return unless command
+      command = Command.new command
       # # Do the forky thing.
       if child = fork
         Thread.new do
@@ -23,6 +24,7 @@ module Sensei
           @slave.puts $?.exitstatus
         end
       else
+        $0 = 'Sensei Master'
         $:.push *ENV['PATH'].split(':')
 
         # Receive STDOUT, STDERR and STDIN.

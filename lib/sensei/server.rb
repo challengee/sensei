@@ -24,11 +24,8 @@ module Sensei
       UNIXServer.open @location do |server|
         # Accept sockets (nonblocking).
         nonblocking read: [server] do
-          puts 'attempt server'
           # Accept a new socket.
           socket = server.accept_nonblock
-
-          puts "got socket #{socket}"
 
           # Attach a Sensei master to this socket.
           Master.new(socket).handle
@@ -40,7 +37,6 @@ module Sensei
 
     def boot
       require './config/environment'
-      puts "Booted"
     end
   end
 end

@@ -11,21 +11,26 @@ module Sensei
     end
 
     def execute
-      UNIXSocket.open @master_location do |master|
-        master.puts @command
-        pid = master.gets.strip.to_i
+      begin
+        UNIXSocket.open @master_location do |master|
+          master.puts @command
+          pid = master.gets.strip.to_i
 
-        Signal.trap 'INT' do
-          Process.kill 'KILL', pid
+          Signal.trap 'INT' do
+            Process.kill 'KILL', pid
+          end
+
+          # Receive STDOUT, STDERR and STDIN.
+          [STDOUT, STDERR, STDIN].each do |io|
+            master.send_io io
+          end
+
+          exit_status = master.gets.strip.to_i
+          exit exit_status
         end
-
-        # Receive STDOUT, STDERR and STDIN.
-        [STDOUT, STDERR, STDIN].each do |io|
-          master.send_io io
-        end
-
-        exit_status = master.gets.strip.to_i
-        exit exit_status
+      rescue Errno::ECONNREFUSED
+        sleep 0.1
+        retry
       end
     end
   end

@@ -3,12 +3,18 @@
 $: << File.expand_path('../../lib', __FILE__)
 
 require 'sensei'
+require 'socket'
 
-if ARGV.size == 0
-  puts 'Booting Sensei'
-  require 'sensei/server'
-  Sensei::Server.new('sensei').start
-else
-  require 'sensei/slave'
-  Sensei::Slave.new(ARGV.join(' ')).execute
+fork do
+  $0 = 'Sensei Server'
+  begin
+    UNIXSocket.open('/tmp/sensei.socket') {}
+  rescue Errno::ECONNREFUSED
+    require 'sensei/server'
+    Sensei::Server.new('sensei').start
+  end
 end
+
+$0 = 'Sensei Slave'
+require 'sensei/slave'
+Sensei::Slave.new(ARGV.join(' ')).execute
