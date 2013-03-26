@@ -8,3 +8,7 @@ Which files? Check via LOADED_FEATURES for files in project directory.
 
 Transparently start server on first sensei slave command.
 Shut down after period of inactivity.
+
+Make executable faster when installed.
+
+Tests.
